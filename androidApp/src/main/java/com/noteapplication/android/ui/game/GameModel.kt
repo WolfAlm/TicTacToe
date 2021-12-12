@@ -1,7 +1,6 @@
 package com.noteapplication.android.ui.game
 
 import androidx.annotation.DrawableRes
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.noteapplication.android.R
@@ -17,15 +16,16 @@ class GameModel : ViewModel()  {
      * Текущий ход
      */
     private lateinit var currentCellState: CellState
-    private val mCellStateByIndex: MutableLiveData<Pair<Int, CellState>> = SingleLiveEvent()
-    val cellStateByIndex: LiveData<Pair<Int, CellState>> = mCellStateByIndex
 
     /**
-     * Здесь mCurrentMove является изменяемым и он закрыт для обращения из вне класса,
-     * а currentMove является не изменяемым и он доступен снаружи класса.
+     * Ход, где отображаться будет для вьюшки
      */
-    private val mCurrentMove = MutableLiveData<CellState>()
-    val currentMove: LiveData<CellState> = mCurrentMove
+    val cellStateByIndex: MutableLiveData<Pair<Int, CellState>> = SingleLiveEvent()
+
+    /**
+     * Состояние, которое передает для изменения стрелки
+     */
+    val currentMove: MutableLiveData<CellState> = MutableLiveData()
 
     init {
         initGame()
@@ -35,17 +35,16 @@ class GameModel : ViewModel()  {
         matrix = Array(9) { CellState.None }
         currentCellState = CellState.Close
 
-        mCurrentMove.value = currentCellState
-
+        currentMove.value = currentCellState
     }
 
     fun onCellClick(index: Int) {
+        println(R.drawable.ic_circle)
         matrix[index] = currentCellState
 
-        matrix[index] = currentCellState
-        mCellStateByIndex.value = Pair(index, currentCellState)
+        cellStateByIndex.value = Pair(index, currentCellState)
         currentCellState = if (currentCellState == CellState.Close) CellState.Circle else CellState.Close
-        mCurrentMove.value = currentCellState
+        currentMove.value = currentCellState
     }
 
     enum class CellState(@DrawableRes val icon: Int, val isClickable: Boolean) {

@@ -41,13 +41,16 @@ class GameFragment : Fragment()  {
             view.setOnClickListener { viewModel.onCellClick(index) }
         }
 
+        // Изменяет стрелку
         viewModel.currentMove.observe(viewLifecycleOwner) {
             binding.arrow.animate()
                 .rotation(if (it == GameModel.CellState.Close) 0f else 180f)
         }
 
+        // Изменяем вид поля -- при клике появляется состояние иконки
         viewModel.cellStateByIndex.observe(viewLifecycleOwner) {
             val (index, state) = it
+
             with(binding.field.getChildAt(index) as ImageView) {
                 isEnabled = state.isClickable
                 setImageResource(state.icon)
